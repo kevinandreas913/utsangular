@@ -1,0 +1,175 @@
+1. ng new andreasuts
+
+2. ng serve
+
+3. copy css halaman lalu paste ke bagian head src/index.html
+
+4. copy juga js halaman lalu paste ke bagian dalam body scr/index.html
+
+5. ubah tag body scr/index.html jadi <body class="hold-transition">
+
+6. copy folder dist dan plugins di folder template yang disediakan kemudian paste ke folder public. Isi folder dist adalah folder (css, js, img) dan isi plugins adalah template.
+
+7. src/app/app.component.html hapus semua dan masukkan <router-outlet></router-outlet> atau <router-outlet />
+
+8. buat component dengan 
+ng generate component login, 
+ng generate component dashboard, 
+ng generate component dashboard2, 
+ng generate component footer, 
+ng generate component header, 
+ng generate component sidebar, 
+ng generate component admin
+
+9. setting route pada src/app/app.routes.ts dengan tambahkan 
+export const routes: Routes = [
+    {path: "admin", component: AdminComponent},
+    {path: "dashboard", component: DashboardComponent},
+    {path: "dashboard2", component: Dashboard2Component},
+    {path: "sign-up", component: SignUpComponent},
+    {path: "login", component: LoginComponent},
+    {path: "", redirectTo: "login", pathMatch: "full"}
+];
+
+@NgModule({
+    imports: [ RouterModule.forRoot(routes)],
+    exports: [ RouterModule ] 
+})
+export class AppRoutes {}
+
+contoh isi dalam login.component.html
+1. copy isi body dalam html sumber halaman tanpa tag "<body> </body>" (cukup isinya saja), kemudian paste ke login.component.html.
+
+2. bagian tag <form class=....> </form> dihapus karena tidak perlu. Cukup tag saja yang dihapus, isinya tidak perlu.
+
+3. setting login.component.ts 
+email = "kevinandreas@gmail.com";
+
+export class LoginComponent {
+  constructor(private renderer: Renderer2) {
+    this.renderer.addClass(document.body, "login-page");
+    
+    // untuk hapus bagian tidak digunakan dalam tag body yang masih ada di inspeksi login
+    this.renderer.removeClass(document.body, "sidebar-mini");
+    this.renderer.removeClass(document.body, "layout-fixed");
+
+    // untuk mengatur ukuran body secara dinamis
+    this.renderer.setAttribute(document.body, "style", "min-height: 464px");
+  }
+
+  ngOnInit(): void {
+    
+  }
+}
+
+4. cara penulisan link adalah 
+<button type="submit" class="btn btn-primary btn-block" [routerLink]="['/admin']" >Sign In</button>
+atau
+<a [routerLink]="['/sign-up']" class="text-center">Register a new membership</a>
+
+5. penulisan placeholder seperti ini
+<input type="email" class="form-control" placeholder={{email}}>
+
+contoh admin
+1. admin.component.html 
+<div class="wrapper">
+    <app-header></app-header>
+    <app-sidebar></app-sidebar>
+    <app-dashboard moduleName="admin"></app-dashboard>
+    <app-footer></app-footer>
+</div>
+
+2. admin.component.ts
+@Component({
+  selector: 'app-admin',
+  standalone: true,
+  imports: [HeaderComponent, FooterComponent, DashboardComponent, SidebarComponent],
+  templateUrl: './admin.component.html',
+  styleUrl: './admin.component.css'
+})
+export class AdminComponent {
+
+}
+
+contoh header
+1. header.component.html
+<nav class="main-header navbar navbar-expand navbar-white navbar-light">...
+</nav>
+
+2. header tidak perlu setting ts
+
+contoh footer
+1. footer.component.html
+<footer class="main-footer">
+    <div class="float-right d-none d-sm-block">
+        <b>Version</b> 3.2.0
+    </div>
+    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+</footer>
+
+2. footer tidak perlu setting ts
+
+contoh sidebar
+1. sidebar.component.html
+<aside class="main-sidebar sidebar-dark-primary elevation-4"> ...
+</aside>
+
+2. sidebar.component.ts - masukkan imports RouterModule dan masukkan @Input() moduleName: string = "";
+@Component({
+  selector: 'app-sidebar',
+  standalone: true,
+  imports: [RouterModule],
+  templateUrl: './sidebar.component.html',
+  styleUrl: './sidebar.component.css'
+})
+export class SidebarComponent {
+  @Input() moduleName: string = "";
+
+}
+
+contoh dashboard
+1. dashboard.component.html - ingat pada bagian awal harus ada content-wrapper agar bisa terkompres ukurannya
+<div class="content-wrapper">
+    <div class="content-header">...
+    </div>
+    <section class="content">...
+    </section>
+</div>
+
+2. dashboard.component.ts - bagian ini untuk sidebar-open, dll
+@Component({
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.css'
+})
+export class DashboardComponent {
+  constructor(private renderer: Renderer2) {}
+
+  ngOnInit(): void {
+    // Menambahkan atau menghapus kelas pada <body> saat komponen dashboard diinisialisasi
+    if (document && document.body) {
+      this.renderer.removeClass(document.body, "sidebar-open");
+      this.renderer.addClass(document.body, "sidebar-closed");
+      this.renderer.addClass(document.body, "sidebar-collapse");
+      this.renderer.addClass(document.body, "sidebar-mini");
+    }
+  }
+}
+
+
+cara import libary 
+1. npm install --save @ng-bootstrap/ng-bootstrap
+2. npm install --save bootstrap
+3. npm install --save font-awesome angular-font-awesome
+
+masukkan ke angular.json di bagian "styles":["src/styles.css",]
+"node_modules/font-awesome/css/font-awesome.css",
+"node_modules/bootstrap/dist/css/bootstrap.css"
+jadi totalnya:
+"styles":[
+          "src/styles.css",
+          "node_modules/font-awesome/css/font-awesome.css",
+          "node_modules/bootstrap/dist/css/bootstrap.css"
+]
